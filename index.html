@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jack & Jill Quiz Game</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(to bottom, #a1c4fd, #c2e9fb);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        #startScreen, #gameScreen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            flex-direction: column;
+            width: 100%;
+            animation: fadeIn 1s ease-in-out;
+        }
+        #startContainer, #gameContainer {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+            transform: scale(0.95);
+            animation: popUp 0.5s ease-in-out forwards;
+        }
+        @keyframes popUp {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        #playButton, .levelButton {
+            font-size: 1.8rem;
+            padding: 15px 30px;
+            background: linear-gradient(to right, #3a7bd5, #3a6073);
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            margin: 10px;
+            color: white;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        #playButton:hover, .levelButton:hover {
+            transform: scale(1.15);
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        .option img {
+            width: 100%;
+            max-width: 220px;
+            height: auto;
+            display: block;
+            margin: auto;
+            border-radius: 15px;
+            transition: transform 0.3s;
+        }
+        .option img:hover {
+            transform: scale(1.2) rotate(5deg);
+        }
+        .option {
+            border: none;
+            background: none;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .option:hover {
+            transform: scale(1.1);
+        }
+        @media (max-width: 600px) {
+            #startContainer, #gameContainer {
+                width: 90%;
+            }
+            .option img {
+                max-width: 180px;
+            }
+            #playButton, .levelButton {
+                font-size: 1.5rem;
+                padding: 12px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="startScreen">
+        <div id="startContainer">
+            <h1>🎉 Jack & Jill Quiz Game 🎉</h1>
+            <button class="levelButton" onclick="startGame('easy')">🐣 Easy</button>
+            <button class="levelButton" onclick="startGame('average')">🐥 Average</button>
+            <button class="levelButton" onclick="startGame('difficult')">🐔 Difficult</button>
+        </div>
+    </div>
+    <div id="gameScreen" style="display: none;">
+        <h2 id="questionText"></h2>
+        <div id="options"></div>
+        <p>⭐ Score: <span id="score">0</span>/3 ⭐</p>
+    </div>
+    <script>
+    let levels = {
+        easy: [
+            { text: "What did Jack and Jill go up the hill to fetch?", options: [
+                { img: "https://scontent.fmnl3-3.fna.fbcdn.net/v/t1.15752-9/476485762_623950557164700_2206709568161242927_n.png?_nc_cat=111&ccb=1-7&_nc_sid=9f807c&_nc_eui2=AeHEzeBJnYPvCfcynlEGIm0JLtZTFQmA3FUu1lMVCYDcVeYrnz1LqK2mq54VxKvHC8o9dmuOC2XnQ8o5gG28MIhq&_nc_ohc=7UGJk3VWIeUQ7kNvgHZrt5N&_nc_oc=AdhKnlMuocT55p6CNFOQuLAUJIb5LNzZMVUmxIR0VP6W0HGUJ27dhGeErlXhzKU9H1s&_nc_zt=23&_nc_ht=scontent.fmnl3-3.fna&oh=03_Q7cD1gHr-oUqLVnQK575aiZhJn3iJ_pRV3pm7z0ISNKenjghQg&oe=67E52535", correct: true },
+                { img: "https://scontent.fmnl3-1.fna.fbcdn.net/v/t1.15752-9/476496263_560627290329173_5224709621088106515_n.png?_nc_cat=110&ccb=1-7&_nc_sid=9f807c&_nc_eui2=AeE6FA_qXYymAnLVx35K5A6YgWAVbZMO4WiBYBVtkw7haDUTb5b-BieugV09JP_Ke8gtcdod6woGbxi6lLC_wck9&_nc_ohc=FDcZHEG8_08Q7kNvgH1SMbb&_nc_oc=AdgWIbbEEYM2Q1y8dtKARNMdw7R-7mLYT9mdwibhDrEDGeIm-ySTPp5a1EccUJNqT5g&_nc_zt=23&_nc_ht=scontent.fmnl3-1.fna&oh=03_Q7cD1gHs0eD6F9N_AViFFWL7OcomxYVhpmyCKj0kiKWfCfReCQ&oe=67E52075", correct: false }
+            ]},
+            { text: "Who fell first?", options: [
+                { img: "image1.png", correct: true },
+                { img: "image2.png", correct: false }
+            ]},
+            { text: "What is Jack's condition after falling?", options: [
+                { img: "image1.png", correct: true },
+                { img: "image2.png", correct: false }
+            ]}
+        ],
+        average: [
+            { text: "Where were Jack and Jill going?", options: [
+                { img: "image1.png", correct: true },
+                { img: "image2.png", correct: false }
+            ]},
+            { text: "What did Jill do after Jack fell?", options: [
+                { img: "image1.png", correct: true },
+                { img: "image2.png", correct: false }
+            ]},
+            { text: "What did they carry?", options: [
+                { img: "image1.png", correct: true },
+                { img: "image2.png", correct: false }
+            ]}
+        ],
+        difficult: [
+            { text: "What was the purpose of fetching water?", options: [
+                { img: "image1.png", correct: true },
+                { img: "image2.png", correct: false }
+            ]},
+            { text: "What injury did Jack get?", options: [
+                { img: "image1.png", correct: true },
+                { img: "image2.png", correct: false }
+            ]},
+            { text: "What lesson does the story teach?", options: [
+                { img: "image1.png", correct: true },
+                { img: "image2.png", correct: false }
+            ]}
+        ]
+    };
+    
+    let currentLevel = [];
+    let currentQuestion = 0;
+    let score = 0;
+    
+    function startGame(level) {
+        currentLevel = levels[level];
+        currentQuestion = 0;
+        score = 0;
+        document.getElementById("startScreen").style.display = "none";
+        document.getElementById("gameScreen").style.display = "block";
+        loadQuestion();
+    }
+    
+    function loadQuestion() {
+        let q = currentLevel[currentQuestion];
+        document.getElementById("questionText").innerText = q.text;
+        let optionsContainer = document.getElementById("options");
+        optionsContainer.innerHTML = "";
+        q.options.forEach(option => {
+            let button = document.createElement("button");
+            button.classList.add("option");
+            button.onclick = () => checkAnswer(option.correct);
+            let img = document.createElement("img");
+            img.src = option.img;
+            button.appendChild(img);
+            optionsContainer.appendChild(button);
+        });
+        speak(q.text);
+    }
+    
+    function checkAnswer(isCorrect) {
+        if (isCorrect) {
+            score++;
+        } else {
+            speakWrongAnswer();
+        }
+        
+        nextQuestion();
+    }
+    
+    function nextQuestion() {
+        currentQuestion++;
+        if (currentQuestion < currentLevel.length) {
+            loadQuestion();
+        } else {
+            alert("Game Over! Your score: " + score);
+            location.reload();
+        }
+        document.getElementById("score").innerText = score;
+    }
+    
+    function speak(text) {
+        let speech = new SpeechSynthesisUtterance(text);
+        speech.lang = "en-US";
+        window.speechSynthesis.speak(speech);
+    }
+    
+    function speakWrongAnswer() {
+        let speech = new SpeechSynthesisUtterance("Haha, you're wrong!");
+        speech.lang = "en-US";
+        window.speechSynthesis.speak(speech);
+    }
+    </script>
+</body>
+</html>
